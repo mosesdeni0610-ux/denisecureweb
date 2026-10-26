@@ -65,12 +65,15 @@ registerForm.addEventListener("submit", async (e) => {
 
   try {
     const { data, error } = await supabaseClient.auth.signUp({
-      email,
-      password,
-      options: {
-        data: { full_name: nama }
-      }
-    });
+  email,
+  password,
+  options: {
+    emailRedirectTo: window.location.href,
+    data: {
+      full_name: nama
+    }
+  }
+});
 
     if (error) throw error;
 
