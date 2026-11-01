@@ -161,8 +161,9 @@ registerForm.classList.add("hidden");
   }
 });
 
+
 // Pulihkan sesi login yang masih aktif saat halaman dibuka.
-supabaseClient.auth.getSession().then(({ data, error }) => {
+supabaseClient.auth.getSession().then(async ({ data, error }) => {
   if (error) {
     tampilkanPesan(error.message, "red");
     return;
@@ -209,8 +210,9 @@ supabaseClient.auth.getSession().then(({ data, error }) => {
     judul.textContent = "Selamat Datang Kembali!";
     deskripsi.textContent = user.email;
     tampilkanPesan("Kamu sudah login.", "green");
-}
+  }
 });
+
 // Fungsi tombol Logout
 document.getElementById("logoutButton").addEventListener("click", async () => {
   const { error } = await supabaseClient.auth.signOut();
