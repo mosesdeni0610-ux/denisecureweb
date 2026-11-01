@@ -1,75 +1,87 @@
 
+/* RESET CSS */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
+/* TAMPILAN BODY */
 body {
-    font-family: Arial, sans-serif;
-    background: linear-gradient(135deg, #081a35, #164e86);
+    font-family: Arial, Helvetica, sans-serif;
+    background: linear-gradient(135deg, #1769aa, #4facfe);
     min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 20px;
-    color: #fff;
 }
 
+/* CONTAINER UTAMA */
 .container {
-    background: #fff;
-    color: #222;
     width: 100%;
-    max-width: 400px;
+    max-width: 420px;
+    background: white;
     padding: 35px;
-    border-radius: 16px;
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
 
+/* LOGO */
 .logo {
-    color: #1769aa;
-    font-size: 25px;
-    font-weight: bold;
     text-align: center;
-    margin-bottom: 20px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #1769aa;
+    margin-bottom: 25px;
 }
 
+/* JUDUL */
 h2 {
     text-align: center;
+    color: #222;
     margin-bottom: 10px;
 }
 
+/* DESKRIPSI */
 #deskripsi {
     text-align: center;
     color: #777;
     margin-bottom: 25px;
+    font-size: 14px;
 }
 
+/* FORM GROUP */
 .form-group {
     margin-bottom: 18px;
 }
 
+/* LABEL */
 label {
     display: block;
     margin-bottom: 8px;
+    color: #333;
     font-weight: bold;
     font-size: 14px;
 }
 
+/* INPUT */
 input {
     width: 100%;
-    padding: 12px;
+    padding: 13px;
     border: 1px solid #ccc;
     border-radius: 8px;
     outline: none;
     font-size: 14px;
 }
 
+/* INPUT SAAT DIKLIK */
 input:focus {
     border-color: #1769aa;
-    box-shadow: 0 0 0 2px #1769aa22;
+    box-shadow: 0 0 5px rgba(23, 105, 170, 0.2);
 }
 
+/* TOMBOL */
 button {
     width: 100%;
     padding: 13px;
@@ -82,63 +94,55 @@ button {
     font-weight: bold;
 }
 
+/* EFEK TOMBOL */
 button:hover {
-    background: #0d4c83;
+    background: #0d4f85;
 }
 
+/* TOMBOL SAAT DIPROSES */
+button:disabled {
+    background: #999;
+    cursor: not-allowed;
+}
+
+/* LINK LOGIN DAN REGISTER */
 .switch {
     text-align: center;
     margin-top: 20px;
     font-size: 14px;
+    color: #555;
 }
 
-a {
+.switch a {
     color: #1769aa;
     font-weight: bold;
     text-decoration: none;
 }
 
-a:hover {
+.switch a:hover {
     text-decoration: underline;
 }
 
-.hidden {
-    display: none;
-}
-
+/* PESAN */
 #pesan {
-    margin-top: 15px;
     text-align: center;
+    margin-top: 18px;
     font-size: 14px;
     overflow-wrap: anywhere;
 }
-#dashboard {
-  max-width: 600px;
-  margin: 40px auto;
-  padding: 30px;
-  text-align: center;
-  background: white;
-  border-radius: 15px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+
+/* MENYEMBUNYIKAN FORM */
+.hidden {
+    display: none !important;
 }
 
-.profile-card {
-  margin-top: 25px;
-  padding: 20px;
-  background: #eef4ff;
-  border-radius: 10px;
-}
+/* RESPONSIVE */
+@media (max-width: 480px) {
+    .container {
+        padding: 25px 20px;
+    }
 
-.profile-card p {
-  margin: 15px 0;
-  color: #333;
-}
-
-#logoutButton {
-  padding: 12px 25px;
-  background: #dc3545;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
+    .logo {
+        font-size: 21px;
+    }
 }

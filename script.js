@@ -1,8 +1,11 @@
+
 const SUPABASE_URL = "https://arhtbxegckbolkttmpde.supabase.co";
+
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_dZH0EO0i79rNkNUMqbn5Fg_4msK0Es8";
+
 const supabaseClient = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_PUBLISHABLE_KEY
+    SUPABASE_URL,
+    SUPABASE_PUBLISHABLE_KEY
 );
 
 const loginForm = document.getElementById("loginForm");
@@ -12,217 +15,124 @@ const deskripsi = document.getElementById("deskripsi");
 const pesan = document.getElementById("pesan");
 
 function tampilkanPesan(teks, warna = "blue") {
-  pesan.textContent = teks;
-  pesan.style.color = warna;
+    pesan.textContent = teks;
+    pesan.style.color = warna;
 }
 
 function tampilkanForm(daftar) {
-  loginForm.classList.toggle("hidden", daftar);
-  registerForm.classList.toggle("hidden", !daftar);
-  judul.textContent = daftar ? "Buat Akun" : "Selamat Datang!";
-  deskripsi.textContent = daftar
-    ? "Daftar untuk memulai"
-    : "Silakan login ke akun Anda";
-  tampilkanPesan("");
+    loginForm.classList.toggle("hidden", daftar);
+    registerForm.classList.toggle("hidden", !daftar);
+
+    judul.textContent = daftar
+        ? "Buat Akun"
+        : "Selamat Datang!";
+
+    deskripsi.textContent = daftar
+        ? "Daftar untuk memulai"
+        : "Silakan login ke akun Anda";
+
+    tampilkanPesan("");
 }
 
+// Berpindah ke Register
 document.getElementById("keRegister").onclick = (e) => {
-  e.preventDefault();
-  tampilkanForm(true);
+    e.preventDefault();
+    tampilkanForm(true);
 };
 
+// Berpindah ke Login
 document.getElementById("keLogin").onclick = (e) => {
-  e.preventDefault();
-  tampilkanForm(false);
+    e.preventDefault();
+    tampilkanForm(false);
 };
 
+// PROSES REGISTER
 registerForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  const nama = document.getElementById("nama").value.trim();
-  const email = document.getElementById("registerEmail").value.trim();
-  const password = document.getElementById("registerPassword").value;
-  const konfirmasi =
-    document.getElementById("konfirmasiPassword").value;
+    const nama = document.getElementById("nama").value.trim();
+    const email = document.getElementById("registerEmail").value.trim();
+    const password = document.getElementById("registerPassword").value;
+    const konfirmasi = document.getElementById("konfirmasiPassword").value;
 
-  if (password.length < 8) {
-    return tampilkanPesan(
-      "Password minimal 8 karakter.",
-      "red"
-    );
-  }
-
-  if (password !== konfirmasi) {
-    return tampilkanPesan(
-      "Konfirmasi password tidak cocok.",
-      "red"
-    );
-  }
-
-  const tombol = registerForm.querySelector("button[type=submit]");
-  tombol.disabled = true;
-  tombol.textContent = "Memproses...";
-
-  try {
-    const { data, error } = await supabaseClient.auth.signUp({
-  email,
-  password,
-  options: {
-    emailRedirectTo: window.location.href,
-    data: {
-      full_name: nama
+    if (password.length < 8) {
+        return tampilkanPesan("Password minimal 8 karakter.", "red");
     }
-  }
+
+    if (password !== konfirmasi) {
+        return tampilkanPesan("Konfirmasi password tidak cocok.", "red");
+    }
+
+    const tombol = registerForm.querySelector("button[type=submit]");
+    tombol.disabled = true;
+    tombol.textContent = "Memproses...";
+
+    try {
+        const { data, error } = await supabaseClient.auth.signUp({
+            email,
+            password,
+            options: {
+                emailRedirectTo: window.location.href,
+                data: {
+                    full_name: nama
+                }
+            }
+        });
+
+        if (error) throw error;
+
+        if (data.session) {
+            registerForm.reset();
+            tampilkanForm(false);
+            tampilkanPesan("Pendaftaran berhasil!", "green");
+        } else {
+            registerForm.reset();
+            tampilkanForm(false);
+            tampilkanPesan(
+                "Pendaftaran berhasil. Periksa email untuk verifikasi.",
+                "green"
+            );
+        }
+
+    } catch (error) {
+        tampilkanPesan(error.message, "red");
+    } finally {
+        tombol.disabled = false;
+        tombol.textContent = "Buat Akun";
+    }
 });
 
-    if (error) throw error;
-
-    if (data.session) {
-      tampilkanPesan(
-        "Pendaftaran berhasil! Kamu sudah login.",
-        "green"
-      );
-    } else {
-      registerForm.reset();
-      tampilkanForm(false);
-      tampilkanPesan(
-        "Akun berhasil didaftarkan. Periksa email untuk verifikasi.",
-        "green"
-      );
-    }
-  } catch (error) {
-    tampilkanPesan(error.message, "red");
-  } finally {
-    tombol.disabled = false;
-    tombol.textContent = "Buat Akun";
-  }
-});
-
+// PROSES LOGIN
 loginForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  const email = document.getElementById("loginEmail").value.trim();
-  const password =
-    document.getElementById("loginPassword").value;
+    const email = document.getElementById("loginEmail").value.trim();
+    const password = document.getElementById("loginPassword").value;
 
-  const tombol = loginForm.querySelector("button[type=submit]");
-  tombol.disabled = true;
-  tombol.textContent = "Memproses...";
+    const tombol = loginForm.querySelector("button[type=submit]");
+    tombol.disabled = true;
+    tombol.textContent = "Memproses...";
 
-  try {
-    const { data, error } =
-      await supabaseClient.auth.signInWithPassword({
-        email,
-        password
-      });
+    try {
+        const { data, error } = await supabaseClient.auth.signInWithPassword({
+            email,
+            password
+        });
 
-    if (error) throw error;
-// TAMPILKAN DASHBOARD PENGGUNA
-document.getElementById("dashboard").style.display = "block";
+        if (error) throw error;
 
-// Ambil data profil pengguna
-const { data: profile, error: profileError } = await supabaseClient
-  .from("profiles")
-  .select("full_name, created_at")
-  .eq("id", data.user.id)
-  .maybeSingle();
+        tampilkanPesan(
+            "Login berhasil! Selamat datang, " + data.user.email,
+            "green"
+        );
 
-// Tampilkan nama pengguna
-document.getElementById("dashboardNama").textContent =
-  profile?.full_name ||
-  data.user.user_metadata?.full_name ||
-  "Pengguna";
+        judul.textContent = "Berhasil Login";
+        deskripsi.textContent = "Anda berhasil masuk ke SecureWeb.";
 
-// Tampilkan email
-document.getElementById("dashboardEmail").textContent =
-  data.user.email;
-
-// Tampilkan tanggal bergabung
-document.getElementById("dashboardTanggal").textContent =
-  profile?.created_at
-    ? new Date(profile.created_at).toLocaleDateString("id-ID")
-    : "-";
-
-// Sembunyikan form login dan register
-loginForm.classList.add("hidden");
-registerForm.classList.add("hidden");
-    judul.textContent = "Berhasil Login";
-    deskripsi.textContent = "Selamat datang di SecureWeb!";
-    tampilkanPesan(
-      "Login berhasil: " + data.user.email,
-      "green"
-    );
-
-  } catch (error) {
-    tampilkanPesan(error.message, "red");
-  } finally {
-    tombol.disabled = false;
-    tombol.textContent = "Login";
-  }
-});
-
-
-// Pulihkan sesi login yang masih aktif saat halaman dibuka.
-supabaseClient.auth.getSession().then(async ({ data, error }) => {
-  if (error) {
-    tampilkanPesan(error.message, "red");
-    return;
-  }
-
-  if (data.session?.user) {
-    const user = data.session.user;
-
-    // Tampilkan Dashboard
-    document.getElementById("dashboard").style.display = "block";
-
-    // Sembunyikan form
-    loginForm.classList.add("hidden");
-    registerForm.classList.add("hidden");
-
-    // Ambil profil dari Supabase
-    const { data: profile, error: profileError } =
-      await supabaseClient
-        .from("profiles")
-        .select("full_name, created_at")
-        .eq("id", user.id)
-        .maybeSingle();
-
-    if (profileError) {
-      console.error(profileError.message);
+    } catch (error) {
+        tampilkanPesan(error.message, "red");
+    } finally {
+        tombol.disabled = false;
+        tombol.textContent = "Login";
     }
-
-    // Tampilkan nama
-    document.getElementById("dashboardNama").textContent =
-      profile?.full_name ||
-      user.user_metadata?.full_name ||
-      "Pengguna";
-
-    // Tampilkan email
-    document.getElementById("dashboardEmail").textContent =
-      user.email || "-";
-
-    // Tampilkan tanggal bergabung
-    document.getElementById("dashboardTanggal").textContent =
-      profile?.created_at
-        ? new Date(profile.created_at).toLocaleDateString("id-ID")
-        : "-";
-
-    judul.textContent = "Selamat Datang Kembali!";
-    deskripsi.textContent = user.email;
-    tampilkanPesan("Kamu sudah login.", "green");
-  }
-});
-
-// Fungsi tombol Logout
-document.getElementById("logoutButton").addEventListener("click", async () => {
-  const { error } = await supabaseClient.auth.signOut();
-
-  if (error) {
-    tampilkanPesan(error.message, "red");
-    return;
-  }
-
-  document.getElementById("dashboard").style.display = "none";
-  tampilkanForm(false);
-  tampilkanPesan("Berhasil logout.", "green");
 });
