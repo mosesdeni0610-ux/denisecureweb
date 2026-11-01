@@ -10,11 +10,11 @@
 <body>
 
     <div class="container">
-        <div class="logo">SecureWeb</div>
+        <div class="logo">Website Deni</div>
         <h2 id="judul">Selamat Datang!</h2>
         <p id="deskripsi">Silakan login ke akun Anda</p>
 
-        <form id="loginForm">
+        <form id="loginForm"> 
             <div class="form-group">
                 <label>Email</label>
                 <input type="email" id="loginEmail"
@@ -72,6 +72,23 @@
 
         <p id="pesan" role="status"></p>
     </div>
+    <!-- DASHBOARD PENGGUNA -->
+<section id="dashboard" style="display: none;">
+  <h1>Dashboard SecureWeb</h1>
+  <p>Selamat datang di SecureWeb!</p>
+
+  <div class="profile-card">
+    <h2>Informasi Pengguna</h2>
+
+    <p>Nama: <span id="dashboardNama">-</span></p>
+    <p>Email: <span id="dashboardEmail">-</span></p>
+    <p>Tanggal Bergabung:
+      <span id="dashboardTanggal">-</span>
+    </p>
+
+    <button id="logoutButton">Logout</button>
+  </div>
+</section>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="script.js"></script>
 </body>

@@ -112,3 +112,33 @@ a:hover {
     font-size: 14px;
     overflow-wrap: anywhere;
 }
+#dashboard {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 30px;
+  text-align: center;
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.profile-card {
+  margin-top: 25px;
+  padding: 20px;
+  background: #eef4ff;
+  border-radius: 10px;
+}
+
+.profile-card p {
+  margin: 15px 0;
+  color: #333;
+}
+
+#logoutButton {
+  padding: 12px 25px;
+  background: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}

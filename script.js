@@ -117,9 +117,35 @@ loginForm.addEventListener("submit", async (e) => {
       });
 
     if (error) throw error;
+// TAMPILKAN DASHBOARD PENGGUNA
+document.getElementById("dashboard").style.display = "block";
 
-    loginForm.classList.add("hidden");
-    registerForm.classList.add("hidden");
+// Ambil data profil pengguna
+const { data: profile, error: profileError } = await supabaseClient
+  .from("profiles")
+  .select("full_name, created_at")
+  .eq("id", data.user.id)
+  .maybeSingle();
+
+// Tampilkan nama pengguna
+document.getElementById("dashboardNama").textContent =
+  profile?.full_name ||
+  data.user.user_metadata?.full_name ||
+  "Pengguna";
+
+// Tampilkan email
+document.getElementById("dashboardEmail").textContent =
+  data.user.email;
+
+// Tampilkan tanggal bergabung
+document.getElementById("dashboardTanggal").textContent =
+  profile?.created_at
+    ? new Date(profile.created_at).toLocaleDateString("id-ID")
+    : "-";
+
+// Sembunyikan form login dan register
+loginForm.classList.add("hidden");
+registerForm.classList.add("hidden");
     judul.textContent = "Berhasil Login";
     deskripsi.textContent = "Selamat datang di SecureWeb!";
     tampilkanPesan(
@@ -166,10 +192,45 @@ supabaseClient.auth.getSession().then(({ data, error }) => {
   }
 
   if (data.session?.user) {
+    const user = data.session.user;
+
+    // Tampilkan Dashboard
+    document.getElementById("dashboard").style.display = "block";
+
+    // Sembunyikan form
     loginForm.classList.add("hidden");
     registerForm.classList.add("hidden");
+
+    // Ambil profil dari Supabase
+    const { data: profile, error: profileError } =
+      await supabaseClient
+        .from("profiles")
+        .select("full_name, created_at")
+        .eq("id", user.id)
+        .maybeSingle();
+
+    if (profileError) {
+      console.error(profileError.message);
+    }
+
+    // Tampilkan nama
+    document.getElementById("dashboardNama").textContent =
+      profile?.full_name ||
+      user.user_metadata?.full_name ||
+      "Pengguna";
+
+    // Tampilkan email
+    document.getElementById("dashboardEmail").textContent =
+      user.email || "-";
+
+    // Tampilkan tanggal bergabung
+    document.getElementById("dashboardTanggal").textContent =
+      profile?.created_at
+        ? new Date(profile.created_at).toLocaleDateString("id-ID")
+        : "-";
+
     judul.textContent = "Selamat Datang Kembali!";
-    deskripsi.textContent = data.session.user.email;
+    deskripsi.textContent = user.email;
     tampilkanPesan("Kamu sudah login.", "green");
-  }
+}
 });
