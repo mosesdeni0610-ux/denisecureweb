@@ -153,29 +153,6 @@ registerForm.classList.add("hidden");
       "green"
     );
 
-    let tombolLogout = document.getElementById("logoutButton");
-
-    if (!tombolLogout) {
-      tombolLogout = document.createElement("button");
-      tombolLogout.id = "logoutButton";
-      tombolLogout.textContent = "Logout";
-      tombolLogout.type = "button";
-      tombolLogout.style.marginTop = "15px";
-      document.querySelector(".container").appendChild(tombolLogout);
-
-      tombolLogout.addEventListener("click", async () => {
-        const { error } = await supabaseClient.auth.signOut();
-
-        if (error) {
-          tampilkanPesan(error.message, "red");
-          return;
-        }
-
-        tombolLogout.remove();
-        tampilkanForm(false);
-        tampilkanPesan("Berhasil logout.", "green");
-      });
-    }
   } catch (error) {
     tampilkanPesan(error.message, "red");
   } finally {
@@ -233,4 +210,17 @@ supabaseClient.auth.getSession().then(({ data, error }) => {
     deskripsi.textContent = user.email;
     tampilkanPesan("Kamu sudah login.", "green");
 }
+});
+// Fungsi tombol Logout
+document.getElementById("logoutButton").addEventListener("click", async () => {
+  const { error } = await supabaseClient.auth.signOut();
+
+  if (error) {
+    tampilkanPesan(error.message, "red");
+    return;
+  }
+
+  document.getElementById("dashboard").style.display = "none";
+  tampilkanForm(false);
+  tampilkanPesan("Berhasil logout.", "green");
 });
