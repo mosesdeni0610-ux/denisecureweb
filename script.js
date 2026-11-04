@@ -1,76 +1,118 @@
 
-const SUPABASE_URL = "https://arhtbxegckbolkttmpde.supabase.co";
+/* ==================================
+   KONFIGURASI SUPABASE
+================================== */
 
-const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_dZH0EO0i79rNkNUMqbn5Fg_4msK0Es8";
+const SUPABASE_URL =
+    "https://arhtbxegckbolkttmpde.supabase.co";
+
+const SUPABASE_PUBLISHABLE_KEY =
+    "sb_publishable_dZH0EO0i79rNkNUMqbn5Fg_4msK0Es8";
 
 const supabaseClient = window.supabase.createClient(
     SUPABASE_URL,
     SUPABASE_PUBLISHABLE_KEY
 );
 
+
+/* ==================================
+   ELEMENT WEBSITE
+================================== */
+
+const loginPage = document.getElementById("loginPage");
+const portfolioPage = document.getElementById("portfolioPage");
+
 const loginForm = document.getElementById("loginForm");
 const registerForm = document.getElementById("registerForm");
-const judul = document.getElementById("judul");
-const deskripsi = document.getElementById("deskripsi");
-const pesan = document.getElementById("pesan");
 
-function tampilkanPesan(teks, warna = "blue") {
-    pesan.textContent = teks;
-    pesan.style.color = warna;
+const authMessage = document.getElementById("authMessage");
+
+const loginButton = document.getElementById("loginButton");
+const registerButton = document.getElementById("registerButton");
+
+const userName = document.getElementById("userName");
+const userEmail = document.getElementById("userEmail");
+
+
+/* ==================================
+   TAMPILKAN PESAN
+================================== */
+
+function tampilkanPesan(teks, warna = "red") {
+    authMessage.textContent = teks;
+    authMessage.style.color = warna;
 }
 
-function tampilkanForm(daftar) {
-    loginForm.classList.toggle("hidden", daftar);
-    registerForm.classList.toggle("hidden", !daftar);
 
-    judul.textContent = daftar
-        ? "Buat Akun"
-        : "Selamat Datang!";
+/* ==================================
+   PINDAH FORM
+================================== */
 
-    deskripsi.textContent = daftar
-        ? "Daftar untuk memulai"
-        : "Silakan login ke akun Anda";
+document.getElementById("showRegister").addEventListener("click", function(e) {
+    e.preventDefault();
+
+    loginForm.classList.add("hidden");
+    registerForm.classList.remove("hidden");
 
     tampilkanPesan("");
+});
+
+document.getElementById("showLogin").addEventListener("click", function(e) {
+    e.preventDefault();
+
+    registerForm.classList.add("hidden");
+    loginForm.classList.remove("hidden");
+
+    tampilkanPesan("");
+});
+
+
+/* ==================================
+   TAMPILKAN HALAMAN BERDASARKAN SESI
+================================== */
+
+function tampilkanPortfolio(user) {
+    loginPage.classList.add("hidden");
+    portfolioPage.classList.remove("hidden");
+
+    const nama =
+        user.user_metadata?.full_name ||
+        user.email?.split("@")[0] ||
+        "Pengguna";
+
+    userName.textContent = nama;
+    userEmail.textContent = user.email || "";
 }
 
-// Berpindah ke Register
-document.getElementById("keRegister").onclick = (e) => {
-    e.preventDefault();
-    tampilkanForm(true);
-};
+function tampilkanLogin() {
+    portfolioPage.classList.add("hidden");
+    loginPage.classList.remove("hidden");
+}
 
-// Berpindah ke Login
-document.getElementById("keLogin").onclick = (e) => {
-    e.preventDefault();
-    tampilkanForm(false);
-};
 
-// PROSES REGISTER
-registerForm.addEventListener("submit", async (e) => {
+/* ==================================
+   REGISTER AKUN
+================================== */
+
+registerForm.addEventListener("submit", async function(e) {
     e.preventDefault();
 
-    const nama = document.getElementById("nama").value.trim();
+    const nama = document.getElementById("registerName").value.trim();
     const email = document.getElementById("registerEmail").value.trim();
     const password = document.getElementById("registerPassword").value;
-    const konfirmasi = document.getElementById("konfirmasiPassword").value;
 
     if (password.length < 8) {
-        return tampilkanPesan("Password minimal 8 karakter.", "red");
+        tampilkanPesan("Password minimal 8 karakter.");
+        return;
     }
 
-    if (password !== konfirmasi) {
-        return tampilkanPesan("Konfirmasi password tidak cocok.", "red");
-    }
-
-    const tombol = registerForm.querySelector("button[type=submit]");
-    tombol.disabled = true;
-    tombol.textContent = "Memproses...";
+    registerButton.disabled = true;
+    registerButton.textContent = "Memproses...";
 
     try {
         const { data, error } = await supabaseClient.auth.signUp({
-            email,
-            password,
+            email: email,
+            password: password,
             options: {
                 emailRedirectTo: window.location.href,
                 data: {
@@ -81,58 +123,100 @@ registerForm.addEventListener("submit", async (e) => {
 
         if (error) throw error;
 
+        registerForm.reset();
+
         if (data.session) {
-            registerForm.reset();
-            tampilkanForm(false);
-            tampilkanPesan("Pendaftaran berhasil!", "green");
+            tampilkanPortfolio(data.user);
         } else {
-            registerForm.reset();
-            tampilkanForm(false);
+            registerForm.classList.add("hidden");
+            loginForm.classList.remove("hidden");
+
             tampilkanPesan(
-                "Pendaftaran berhasil. Periksa email untuk verifikasi.",
+                "Pendaftaran berhasil. Silakan periksa email untuk verifikasi.",
                 "green"
             );
         }
 
     } catch (error) {
-        tampilkanPesan(error.message, "red");
+        tampilkanPesan(error.message);
+
     } finally {
-        tombol.disabled = false;
-        tombol.textContent = "Buat Akun";
+        registerButton.disabled = false;
+        registerButton.textContent = "Buat Akun";
     }
 });
 
-// PROSES LOGIN
-loginForm.addEventListener("submit", async (e) => {
+
+/* ==================================
+   LOGIN
+================================== */
+
+loginForm.addEventListener("submit", async function(e) {
     e.preventDefault();
 
     const email = document.getElementById("loginEmail").value.trim();
     const password = document.getElementById("loginPassword").value;
 
-    const tombol = loginForm.querySelector("button[type=submit]");
-    tombol.disabled = true;
-    tombol.textContent = "Memproses...";
+    loginButton.disabled = true;
+    loginButton.textContent = "Memeriksa akun...";
 
     try {
-        const { data, error } = await supabaseClient.auth.signInWithPassword({
-            email,
-            password
-        });
+        const { data, error } =
+            await supabaseClient.auth.signInWithPassword({
+                email: email,
+                password: password
+            });
 
         if (error) throw error;
 
-        tampilkanPesan(
-            "Login berhasil! Selamat datang, " + data.user.email,
-            "green"
-        );
+        loginForm.reset();
 
-        judul.textContent = "Berhasil Login";
-        deskripsi.textContent = "Anda berhasil masuk ke SecureWeb.";
+        tampilkanPortfolio(data.user);
 
     } catch (error) {
-        tampilkanPesan(error.message, "red");
+        tampilkanPesan(error.message);
+
     } finally {
-        tombol.disabled = false;
-        tombol.textContent = "Login";
+        loginButton.disabled = false;
+        loginButton.textContent = "Login";
     }
 });
+
+
+/* ==================================
+   LOGOUT
+================================== */
+
+document.getElementById("logoutButton").addEventListener("click", async function() {
+    const { error } = await supabaseClient.auth.signOut();
+
+    if (error) {
+        alert("Gagal logout: " + error.message);
+        return;
+    }
+
+    tampilkanLogin();
+});
+
+
+/* ==================================
+   CEK SESI LOGIN SAAT WEBSITE DIBUKA
+================================== */
+
+async function periksaSesi() {
+    const { data, error } = await supabaseClient.auth.getSession();
+
+    if (error) {
+        tampilkanLogin();
+        tampilkanPesan(error.message);
+        return;
+    }
+
+    if (data.session) {
+        tampilkanPortfolio(data.session.user);
+    } else {
+        tampilkanLogin();
+    }
+}
+
+periksaSesi();
